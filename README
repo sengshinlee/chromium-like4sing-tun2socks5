@@ -1,0 +1,120 @@
+Description
+  A bash script for Ubuntu designed to seamlessly integrate the advantages of NaiveProxy, sing-box, and SOCKS5, so you can tunnel all you desire, mainly by providing user custom configuration templates for sing-box (Version: v1.15.0-alpha.9).
+
+Features
+  - Only support "sing-box-1.15.0-alpha.9-linux"
+
+  + Combine the advantages of NaiveProxy(Chromium-like) protocol, sing-box naked core and SOCKS5 protocol
+      - NaiveProxy mimics real Chromium TLS and HTTP/2, so it reads as an ordinary browser tab
+
+  + Install sing-box on Ubuntu Linux via dpkg
+      - Command: curl -fsSL https://sing-box.app/install.sh | sh -s -- --version 1.15.0-alpha.9
+
+  + Provide a JSON Schema Draft 2020-12 for configuration files, compatible editors can use it for completion and validation
+      - JSON Schema URL: https://sing-box.sagernet.org/schema.json
+
+  - Support the sing-box dashboard using the sing-box API service, which provides a gRPC server for the sing-box server
+
+  + NIC forwarding
+      + Physical NIC(Proxy: naive) -4-> Virtual NIC: sing-tun0 -2-> Proxy: socks5 -2-> Physical NIC
+          + chromium-like4tun
+              - naive4sing-tun
+          + tun2socks
+              - sing-tun2socks5
+
+  + Install Golang and the Caddy binary with "klzgrad/forwardproxy@naive" padding layer, combining both in one
+      - Command: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+      - Command: ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive
+      - The Caddy binary is "/usr/bin/caddy"
+
+  + The Caddy configuration files directory is "/etc/caddy"
+      + Provide a Caddy configuration file template
+          - /etc/caddy/Caddyfile
+
+  + Provide a fake "Download Chromium" website and its assets to resist active probing by the GFW
+      - /var/www/html
+
+  + Provide two sing-box user custom configuration templates on Ubuntu Linux Server platform
+      + sing-box configuration files directory is "/etc/sing-box"
+          - config.ipv4.obfs.chromium-like.json5
+          - config.obfs.chromium-like.json5
+      - sing-box run -c /etc/sing-box/config[.ipv4].obfs.chromium-like.json5
+
+  - Provide some sing-box user custom configuration templates on Ubuntu Linux Desktop, macOS and Windows platforms
+
+  + Support two cron schedules
+      - /usr/local/bin/caddy-run-cron.sh
+      - /usr/local/bin/sing-box-run-cron.sh
+
+  - Support both IPv4-only and dual-stack
+
+  + Support sing-box naked core and all official GUI clients
+      - sing-box naked core
+      - sing-box API
+      - sing-box dashboard
+      - SFL
+      - SFA
+      - SFM
+      - SFI
+      - SFT
+      - SFW
+
+Directory Tree
+.
+|-- caddy
+|   |-- Caddyfile
+|   `-- var
+|       `-- www
+|           `-- html
+|               |-- _assets
+|               |   |-- favicon.ico
+|               |   `-- icon-chromium-96.png
+|               |-- index.html
+|               |-- robots.txt
+|               `-- _stylesheets
+|                   |-- cookie_consent_bar.v3.js
+|                   |-- default.css
+|                   |-- github.min.css
+|                   |-- index.js
+|                   |-- js
+|                   `-- style.css
+|-- LICENSE
+|-- README
+|-- sing-box.sh
+`-- user-custom-templates
+    |-- client
+    |   |-- android-or-android-tv-os
+    |   |   |-- android.ipv4.obfs.chromium-like.json
+    |   |   |-- android.ipv4.strict_route.obfs.chromium-like.json
+    |   |   |-- android.obfs.chromium-like.json
+    |   |   `-- android.strict_route.obfs.chromium-like.json
+    |   |-- ios
+    |   |   |-- ios.ipv4.obfs.chromium-like.json
+    |   |   |-- ios.ipv4.strict_route.obfs.chromium-like.json
+    |   |   |-- ios.obfs.chromium-like.json
+    |   |   `-- ios.strict_route.obfs.chromium-like.json
+    |   |-- ipados-or-tvos
+    |   |   |-- ipados.ipv4.obfs.chromium-like.json
+    |   |   |-- ipados.ipv4.strict_route.obfs.chromium-like.json
+    |   |   |-- ipados.obfs.chromium-like.json
+    |   |   `-- ipados.strict_route.obfs.chromium-like.json
+    |   |-- macos
+    |   |   |-- macos.ipv4.obfs.chromium-like.json
+    |   |   |-- macos.ipv4.strict_route.obfs.chromium-like.json
+    |   |   |-- macos.obfs.chromium-like.json
+    |   |   `-- macos.strict_route.obfs.chromium-like.json
+    |   |-- ubuntu
+    |   |   |-- ubuntu.ipv4.obfs.chromium-like.json
+    |   |   |-- ubuntu.ipv4.strict_route.obfs.chromium-like.json
+    |   |   |-- ubuntu.obfs.chromium-like.json
+    |   |   `-- ubuntu.strict_route.obfs.chromium-like.json
+    |   `-- windows
+    |       |-- windows.ipv4.obfs.chromium-like.json
+    |       |-- windows.ipv4.strict_route.obfs.chromium-like.json
+    |       |-- windows.obfs.chromium-like.json
+    |       `-- windows.strict_route.obfs.chromium-like.json
+    `-- server
+        `-- ubuntu
+            `-- sing-tun2socks5
+                |-- config.ipv4.obfs.chromium-like.json5
+                `-- config.obfs.chromium-like.json5
