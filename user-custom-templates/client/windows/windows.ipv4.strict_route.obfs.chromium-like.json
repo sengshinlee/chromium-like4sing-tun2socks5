@@ -1,0 +1,497 @@
+{
+  "$schema": "https://sing-box.sagernet.org/schema.json",
+  "log": {
+    "disabled": false,
+    "level": "debug",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "https",
+        "tag": "DNSPod-V4",
+        "server": "120.53.53.53",
+        "tls": {
+          "enabled": true,
+          "server_name": "dns.pub"
+        }
+      },
+      {
+        "type": "https",
+        "tag": "DNSPod-DoH",
+        "domain_resolver": "DNSPod-V4",
+        "server": "dns.pub"
+      },
+      {
+        "type": "https",
+        "tag": "Cloudflare-V4",
+        "detour": "naive-out",
+        "server": "1.1.1.1",
+        "tls": {
+          "enabled": true,
+          "server_name": "cloudflare-dns.com"
+        }
+      },
+      {
+        "type": "https",
+        "tag": "Cloudflare-DoH",
+        "detour": "naive-out",
+        "domain_resolver": "Cloudflare-V4",
+        "server": "cloudflare-dns.com"
+      },
+      {
+        "type": "fakeip",
+        "tag": "FakeIP",
+        "inet4_range": "198.18.0.0/15"
+      }
+    ],
+    "rules": [
+      {
+        "domain": [
+          "YOUR_NAIVE_SERVER_DOMAIN"
+        ],
+        "server": "DNSPod-V4"
+      },
+      {
+        "query_type": [
+          "AAAA"
+        ],
+        "action": "predefined",
+        "rcode": "NOERROR"
+      },
+      {
+        "query_type": [
+          "A"
+        ],
+        "server": "FakeIP"
+      },
+      {
+        "rule_set": "geosite-geolocation-cn",
+        "server": "DNSPod-DoH"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "query_type": [
+              "A"
+            ]
+          },
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          }
+        ],
+        "action": "evaluate",
+        "server": "Cloudflare-DoH"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "query_type": [
+              "A"
+            ]
+          },
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          },
+          {
+            "rule_set": "geoip-cn",
+            "match_response": true
+          }
+        ],
+        "action": "respond"
+      },
+      {
+        "rule_set": "geosite-anthropic",
+        "server": "Cloudflare-DoH"
+      }
+    ],
+    "final": "Cloudflare-DoH",
+    "strategy": "ipv4_only",
+    "disable_cache": true,
+    "disable_expire": false
+  },
+  "ntp": {
+    "server": "time.windows.com",
+    "server_port": 0
+  },
+  "http_clients": [
+    {
+      "tag": "rule-set-direct-out",
+      "engine": "go"
+    }
+  ],
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "sing-tun0",
+      "mtu": 9000,
+      "address": [
+        "172.18.0.1/30"
+      ],
+      "auto_route": true,
+      "strict_route": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "naive",
+      "tag": "naive-out",
+      "server": "YOUR_NAIVE_SERVER_DOMAIN",
+      "server_port": 443,
+      "username": "YOUR_NAIVE_SERVER_USERNAME",
+      "password": "YOUR_NAIVE_SERVER_PASSWORD",
+      "insecure_concurrency": 0,
+      "extra_headers": {},
+      "stream_receive_window": "128 MB",
+      "udp_over_tcp": false,
+      "quic": false,
+      "quic_congestion_control": "cubic",
+      "quic_session_receive_window": "15 MB",
+      "tls": {
+        "enabled": true,
+        "server_name": "YOUR_NAIVE_SERVER_DOMAIN",
+        "certificate":[],
+        "certificate_path": "",
+        "ech": {
+          "enabled": false,
+          "config": [],
+          "config_path": "",
+          "query_server_name": ""
+        }
+      }
+    },
+    {
+      "type": "direct",
+      "tag": "direct-out"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "protocol": "dns"
+          },
+          {
+            "port": 53
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 853
+          },
+          {
+            "protocol": "stun"
+          }
+        ],
+        "action": "reject"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct-out"
+      },
+      {
+        "process_name": [
+          "crashpad_handler.exe",
+          "WeChatAppEx.exe",
+          "Weixin.exe",
+          "WeixinUpdate.exe",
+
+          "aha_doctor.exe",
+          "Lark.exe",
+          "task_host.exe",
+          "ttdaemon.exe",
+          "update.exe",
+          "video_conference_sdk.exe",
+          "xperf.exe",
+
+          "bili-curt-test.exe",
+          "bililive_browser.exe",
+          "dpinst64.exe",
+          "dpscat.exe",
+          "DriverInstaller.exe",
+          "hpatchz.exe",
+          "livehime.exe",
+          "livehime_tts.exe",
+
+          "rustdesk.exe",
+
+          "Figma.exe",
+
+          "Spotify.exe",
+
+          "autoDiagnoseUpdate.exe",
+          "Autoupdate.exe",
+          "BaiduNetdisk.exe",
+          "BaiduNetdiskHost.exe",
+          "BaiduNetdiskRender.exe",
+          "kernelUpdate.exe",
+          "ServiceAssistans.exe",
+          "ShellFolder.exe",
+          "ShellFolder64.exe",
+          "YunDetectService.exe",
+          "YunUtilityService.exe",
+
+          "aDrive.exe",
+          "elevate.exe",
+
+          "APlayer.exe",
+          "cssdk.exe",
+          "DownloadSDKServer.exe",
+          "InstallXLGuard.exe",
+          "InstallXLWFP.exe",
+          "LiveUDInstaller.exe",
+          "svchost.exe",
+          "Thunder.exe",
+          "ThunderCmd.exe",
+          "ThunderEv.exe",
+          "ThunderFW.exe",
+          "ThunderRepair.exe",
+          "ThunderStart.exe",
+          "Win7AppId.exe",
+          "wxinit.exe",
+          "xlacc.exe",
+          "xllite.exe",
+          "XLBugReport.exe",
+          "XLLiveUD.exe",
+          "XLServicePlatform.exe",
+          "XLWFPSetup.exe",
+
+          "BeeWebEngineProcess.exe",
+          "CrashServerDamon.exe",
+          "HikIotClient.exe",
+          "HikIotVideoWallServer.exe",
+          "HikIotVideoClient.exe",
+          "HikIotTCP.exe",
+          "HikIotServer.exe",
+          "HikIotDP.exe",
+          "WatchDog.exe",
+
+          "uu.exe",
+          "uu_ball.exe",
+          "uu_cloudsyn.exe",
+          "uu_launcher.exe",
+
+          "CrashReportClient.exe",
+          "EOSBootStrapper.exe",
+          "EOSOverlayRenderer-Win32-Shipping.exe",
+          "EOSOverlayRenderer-Win64-Shipping.exe",
+          "EpicGamesLauncher.exe",
+          "EpicGamesUpdater.exe",
+          "EpicOnlineServicesHost.exe",
+          "EpicOnlineServicesInstaller.exe",
+          "EpicOnlineServicesInstallHelper.exe",
+          "EpicOnlineServicesUIHelper.exe",
+          "EpicOnlineServicesUserHelper.exe",
+          "EpicWebHelper.exe",
+          "InstallChainer.exe",
+          "UnrealEngineLauncher.exe",
+          "UnrealVersionSelector.exe",
+
+          "EasyAntiCheat_EOS_Setup.exe",
+          "FortniteBootstrapper.exe",
+          "FortniteClient-Win64-Shipping.exe",
+          "FortniteClient-Win64-Shipping_EAC_EOS.exe",
+          "FortniteLauncher.exe",
+
+          "BEService.exe",
+          "BEService_pubg.exe",
+          "BEService_x64.exe",
+          "BroCrashReporter.exe",
+          "ExecPubg.exe",
+          "iigw_server.exe",
+          "TslGame.exe",
+          "TslGame_BE.exe",
+          "TslGame_ZK.exe",
+          "WinMTR.exe",
+          "zksvc.exe",
+
+          "log-uploader.exe",
+          "vgc.exe",
+          "vgm.exe",
+          "vgtray.exe",
+
+          "Riot Client.exe",
+          "RiotClientCrashHandler.exe",
+          "RiotClientServices.exe",
+
+          "ACE-Helper.exe",
+          "ACE-Service64.exe",
+          "ACE-Setup64.exe",
+          "ACE-Tray.exe",
+          "SGuard64.exe",
+          "SGuardSvc64.exe",
+          "SGuardUpdate64.exe",
+
+          "aclos-launcher.exe",
+          "AclosGameProxy.exe",
+          "browser.exe",
+          "bugreport.exe",
+          "BugReport.exe",
+          "crashpad_handler.exe",
+          "CrossInstallerExternal64.exe",
+          "CrossProxy.exe",
+          "DiagnoseTool.exe",
+          "minibrowser.exe",
+          "无畏契约登录器.exe",
+
+          "VALORANT.exe",
+          "VALORANT-Win64-Shipping.exe"
+        ],
+        "outbound": "direct-out"
+      },
+      {
+        "process_name": [
+          "chrome-native-host.exe",
+          "claude.exe",
+          "Claude Setup.exe",
+          "cowork-svc.exe",
+          "github-mcp-server.exe"
+        ],
+        "outbound": "naive-out"
+      },
+      {
+        "domain": [
+          "claude.ai",
+          "www.claude.ai",
+          "a.claude.ai",
+          "assets.claude.ai",
+          "console.claude.ai",
+          "downloads.claude.ai",
+          "preview.claude.ai",
+          "sso.claude.ai",
+          "staging.claude.ai",
+          "status.claude.ai",
+
+          "claude.com",
+          "www.claude.com",
+
+          "anthropic.com",
+          "www.anthropic.com",
+          "a-api.anthropic.com",
+          "a-cdn.anthropic.com",
+          "alignment.anthropic.com",
+          "api.anthropic.com",
+          "assets.anthropic.com",
+          "console.anthropic.com",
+          "docs.anthropic.com",
+          "platform.anthropic.com",
+          "privacy.anthropic.com",
+          "red.anthropic.com",
+          "statsig.anthropic.com",
+          "status.anthropic.com",
+          "support.anthropic.com",
+          "trust.anthropic.com",
+          "anthropic.cloudflareaccess.com",
+          "claude-ai.staging.ant.dev"
+        ],
+        "outbound": "naive-out"
+      },
+      {
+        "domain_suffix": [
+          "figma.com",
+          "spotify.com",
+
+          "dnse2.com",
+          "eziot.com",
+          "ezviz.com",
+          "hikiot.com",
+          "hikiot.com.eo.dnse2.com",
+          "hikmall.com",
+          "hikvision.com",
+          "hik-cloud.com",
+          "hik-express.com",
+          "ys7.com",
+
+          "mountaintoys.cn",
+          "edge.mountaintoys.cn"
+        ],
+        "outbound": "direct-out"
+      },
+      {
+        "domain_suffix": [
+          "claude.ai",
+          "claude.com",
+          "anthropic.com"
+        ],
+        "outbound": "naive-out"
+      },
+      {
+        "rule_set": "geosite-geolocation-cn",
+        "outbound": "direct-out"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "geoip-cn"
+          },
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          }
+        ],
+        "outbound": "direct-out"
+      },
+      {
+        "rule_set": "geosite-anthropic",
+        "outbound": "naive-out"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-geolocation-cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-geolocation-!cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-anthropic",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-anthropic.srs"
+      }
+    ],
+    "final": "naive-out",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "DNSPod-DoH",
+    "default_http_client": "rule-set-direct-out"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": false,
+      "store_dns": true,
+      "store_fakeip": true
+    }
+  }
+}
