@@ -1,0 +1,159 @@
+{
+  "$schema": "https://sing-box.sagernet.org/schema.json",
+  "log": {
+    "disabled": true,
+    "level": "debug",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "https",
+        "tag": "Cloudflare-V4",
+        "server": "1.1.1.1",
+        "tls": {
+          "enabled": true,
+          "server_name": "cloudflare-dns.com"
+        }
+      },
+      {
+        "type": "https",
+        "tag": "Cloudflare-DoH",
+        "domain_resolver": "Cloudflare-V4",
+        "server": "cloudflare-dns.com"
+      }
+    ],
+    "final": "Cloudflare-DoH",
+    "strategy": "ipv4_only",
+    "disable_cache": false,
+    "disable_expire": false
+  },
+  "ntp": {
+    "server": "ntp.ubuntu.com",
+    "server_port": 0
+  },
+  "http_clients": [
+    {
+      "tag": "rule-set-direct-out",
+      "engine": "go"
+    }
+  ],
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "sing-tun0",
+      "mtu": 9000,
+      "address": [
+        "172.18.0.1/30"
+      ],
+      "auto_route": true,
+      "iproute2_table_index": 2022,
+      "iproute2_rule_index": 9000,
+      "auto_redirect": true,
+      "auto_redirect_input_mark": "0x2023",
+      "auto_redirect_output_mark": "0x2024",
+      "loopback_address": [
+        "10.7.0.1"
+      ],
+      "strict_route": true,
+      "route_address": [
+        "0.0.0.0/1",
+        "128.0.0.0/1"
+      ],
+      "route_exclude_address": [
+        "192.168.0.0/16"
+      ],
+      "udp_timeout": "5m",
+      "udp_mapping": "endpoint_independent",
+      "udp_filtering": "endpoint_independent",
+      "udp_nat_max": 0
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "socks",
+      "tag": "socks-out",
+      "server": "YOUR_SOCKS5_SERVER_DOMAIN_OR_PUBLIC_IPV4",
+      "server_port": YOUR_SOCKS5_SERVER_PORT,
+      "username": "YOUR_SOCKS5_SERVER_USERNAME",
+      "password": "YOUR_SOCKS5_SERVER_PASSWORD",
+      "udp_over_tcp": false
+    },
+    // Equivalent to tag: "naive-out"
+    {
+      "type": "direct",
+      "tag": "direct-out"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "protocol": "dns"
+          },
+          {
+            "port": 53
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct-out"
+      },
+      {
+        "domain": [
+          "YOUR_SOCKS5_SERVER_DOMAIN"
+        ],
+        "outbound": "direct-out"
+      },
+      // {
+      //   "ip_cidr": [
+      //     "YOUR_SOCKS5_SERVER_PUBLIC_IPV4/32"
+      //   ],
+      //   "outbound": "direct-out"
+      // },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 853
+          },
+          {
+            "protocol": "stun"
+          }
+        ],
+        "action": "reject"
+      }
+    ],
+    "final": "socks-out",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "Cloudflare-DoH",
+    "default_http_client": "rule-set-direct-out"
+  },
+  "services": [
+    {
+      "type": "api",
+      "tag": "API",
+      "listen": "127.0.0.1",
+      "listen_port": 8081,
+      "dashboard": {
+        "enabled": true
+      }
+    }
+  ],
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "store_dns": true
+    }
+  }
+}
