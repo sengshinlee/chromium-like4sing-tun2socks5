@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Download Chromium</title>
+  <link rel="icon" type="image/x-icon" href="./_assets/favicon.ico">
+  <link rel="stylesheet" href="./_stylesheets/@docsearch/style.css">
+  <link rel="stylesheet" href="./_stylesheets/default.css">
+  <link rel="stylesheet" href="./_stylesheets/highlight.js/github.min.css">
+</head>
+
+<header>
+  <button id="mobile-nav-toggle" class="mobile-nav-toggle" type="button" aria-label="Open navigation menu" aria-controls="sidebar-left" aria-expanded="false">
+    <span class="mobile-nav-toggle-bars" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+  <a class="header-brand" href="/">
+    <img alt="the Chromium logo" src="./_assets/icon-chromium-96.png" width="48" height="48">
+    <h2>The Chromium Projects</h2>
+  </a>
+  <div id="search"></div>
+</header>
+
+<div id="mobile-nav-backdrop" aria-hidden="true"></div>
+
+<div id="main-wrapper">
+  <nav id="sidebar-left" class="sidebar-nav" aria-label="Site navigation">
+    <div class="mobile-nav-header">
+      <h3>Menu</h3>
+      <button id="mobile-nav-close" class="mobile-nav-close" type="button" aria-label="Close navigation menu">&times;</button>
+    </div>
+    <section class="sidebar-primary">
+      <a href="/chromium-projects">Home</a>
+      <a href="/Home">Chromium</a>
+      <a href="/chromium-os">ChromiumOS</a>
+    </section>
+    <section class="sidebar-quick-links">
+      <h4>Quick links</h4>
+      <a href="/for-testers/bug-reporting-guidelines">Report bugs</a>
+      <a href="/developers/discussion-groups">Discuss</a>
+    </section>
+    <section class="sidebar-other-sites">
+      <h4>Other sites</h4>
+      <a href="https://blog.chromium.org/">Chromium Blog</a>
+      <a href="https://developer.chrome.com/extensions">Google Chrome Extensions</a>
+    </section>
+    <section class="sidebar-license" role="complementary">
+      Except as otherwise
+      <a href="https://developers.google.com/site-policies.html#restrictions">noted</a>,
+      the content of this page is licensed under a
+      <a href="https://creativecommons.org/licenses/by/2.5/">Creative Commons Attribution 2.5 license</a>,
+      and examples are licensed under the
+      <a href="https://chromium.googlesource.com/chromium/src/+/HEAD/LICENSE">BSD License</a>.
+    </section>
+    <section class="sidebar-privacy" role="complementary">
+      <a href="https://policies.google.com/privacy">Privacy</a>
+    </section>
+    <a class="edit-this-page" href="https://edit.chromium.org/edit?repo=chromium/website/main&file=site/getting-involved/download-chromium/index.md&cloneRepo=chromium/website:refs/heads/main&fullPath=chromium/site/getting-involved/download-chromium/index.md">Edit</a>
+  </nav>
+  <main>
+    <div class="breadcrumbs">
+      <a href="/getting-involved">Getting Involved</a> &gt;
+    </div>
+    <h1>Download Chromium</h1>
+  <p>You can test Chrome builds or Chromium builds. Chrome builds have the most
+infrastructure for analyzing crashes and reporting bugs. They also auto-update as new
+releases occur, which makes them a good choice for most uses.
+<a href="https://www.google.com/chrome/canary">Chrome Canary</a> is available for Windows
+and Mac and autoupdates daily.
+<a href="/getting-involved/chrome-release-channels/">Other channels</a> (Dev
+and Beta) are available.</p>
+<p><a href="https://developer.chrome.com/blog/chrome-for-testing/">Chrome for Testing</a> builds and
+Chromium builds do not auto-update, and do not have symbols. This makes them most
+useful for checking whether a claimed fix actually works. Use the following
+instructions to find builds.</p>
+<h2 id="chrome-for-testing" tabindex="-1"><a class="header-anchor" href="#chrome-for-testing">Chrome for Testing</a></h2>
+<p>Chrome for Testing is a dedicated flavor of Chrome targeting the testing use case,
+without auto-update, integrated into the Chrome release process, made available for
+every Chrome release across all channels (Stable/<wbr>Beta/<wbr>Dev/<wbr>Canary).</p>
+<p>The easiest way to download Chrome for Testing binaries for your platform is by using
+<a href="https://pptr.dev/browsers-api">the <code>@puppeteer/browsers</code> command-line utility</a>,
+available via <code>npm</code>. Here are some examples:</p>
+<pre><code class="language-sh"><span class="hljs-comment"># Download the latest available Chrome for Testing binary corresponding to the Stable channel.</span>
+npx @puppeteer/browsers install chrome@stable
+
+<span class="hljs-comment"># Download a specific Chrome for Testing version.</span>
+npx @puppeteer/browsers install chrome@116.0.5793.0
+
+<span class="hljs-comment"># Download the latest available ChromeDriver version corresponding to the Canary channel.</span>
+npx @puppeteer/browsers install chromedriver@canary
+
+<span class="hljs-comment"># Download a specific ChromeDriver version.</span>
+npx @puppeteer/browsers install chromedriver@116.0.5793.0
+</code></pre>
+<p>If you prefer to build your own automated scripts for downloading these binaries,
+refer to
+<a href="https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints">the JSON API endpoints</a>
+with the latest available versions per Chrome release channel (Stable, Beta, Dev,
+Canary).</p>
+<p>To get a quick overview of the latest status, consult
+<a href="https://googlechromelabs.github.io/chrome-for-testing/">the Chrome for Testing availability dashboard</a>.</p>
+<h2 id="chromium" tabindex="-1"><a class="header-anchor" href="#chromium">Chromium</a></h2>
+<p>In contrast to Chrome for Testing builds, Chromium builds are made available on a
+best-effort basis, and are built from arbitrary revisions that don’t necessarily
+map to user-facing Chrome releases.</p>
+<h3 id="easy-point-and-click-for-latest-build" tabindex="-1"><a class="header-anchor" href="#easy-point-and-click-for-latest-build">Easy Point and Click for latest build:</a></h3>
+<blockquote>
+<p>Open up <a href="https://download-chromium.appspot.com">https://download-chromium.appspot.com</a></p>
+</blockquote>
+<h3 id="easy-script-to-download-and-run-latest-linux-build" tabindex="-1"><a class="header-anchor" href="#easy-script-to-download-and-run-latest-linux-build">Easy Script to download and run latest Linux build:</a></h3>
+<ul>
+<li><a href="https://github.com/scheib/chromium-latest-linux">https://github.com/<wbr>scheib/<wbr>chromium-latest-linux</a></li>
+</ul>
+<h3 id="not-as-easy-steps" tabindex="-1"><a class="header-anchor" href="#not-as-easy-steps">Not-as-easy steps:</a></h3>
+<ol>
+<li>Head to
+<a href="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html">https://commondatastorage.googleapis.com/<wbr>chromium-browser-snapshots/<wbr>index.html</a></li>
+<li>Choose your platform: Mac, Win, Linux, ChromiumOS</li>
+<li>Pick the Chromium build number you'd like to use
+<ol>
+<li>The latest one is mentioned in the <code>LAST_CHANGE</code> file</li>
+</ol>
+</li>
+<li>Download the zip file containing Chromium</li>
+<li>There is a binary executable within to run</li>
+</ol>
+<h3 id="please-file-bugs-as-appropriate" tabindex="-1"><a class="header-anchor" href="#please-file-bugs-as-appropriate">Please <a href="https://crbug.com/new">file bugs</a> as appropriate.</a></h3>
+<h2 id="downloading-old-builds-of-chrome-chromium" tabindex="-1"><a class="header-anchor" href="#downloading-old-builds-of-chrome-chromium">Downloading old builds of Chrome / Chromium</a></h2>
+<p>Let's say you want a build of Chrome 44 for debugging purposes. Google does not
+offer old builds as they do not have up-to-date security fixes.</p>
+<p>However, you can get a build of Chromium 44.x which should mostly match the
+stable release.</p>
+<p>Here's how you find it:</p>
+<ol>
+<li>Look in
+<a href="https://googlechromereleases.blogspot.com/search/label/Stable%20updates">https://googlechromereleases.blogspot.com/<wbr>search/<wbr>label/<wbr>Stable updates</a>
+for the last time &quot;44.&quot; was mentioned.</li>
+<li>Loop up that version history (&quot;44.0.2403.157&quot;) in the <a href="https://omahaproxy.appspot.com/">Position
+Lookup</a></li>
+<li>In this case it returns a base position of &quot;330231&quot;. This is the
+commit of where the 44 release was branched, back in May 2015.*</li>
+<li>Open the <a href="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html">continuous builds
+archive</a></li>
+<li>Click through on your platform (Linux/<wbr>Mac/<wbr>Win)</li>
+<li>Paste &quot;330231&quot; into the filter field at the top and wait for all the
+results to XHR in.</li>
+<li>Eventually I get a perfect hit:
+<a href="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/330231/">https://commondatastorage.googleapis.com/<wbr>chromium-browser-snapshots/<wbr>index.html?prefix=Mac/<wbr>330231/</a>
+<ol>
+<li>Sometimes you may have to decrement the commit number until you
+find one.</li>
+</ol>
+</li>
+<li>Download and run!</li>
+</ol>
+<p>* As this build was made at 44 branch point, it does not have any commits
+merged in while in beta.</p>
+<p>Typically that's OK, but if you need a true build of &quot;44.0.<em>2403</em>.x&quot; then you'll
+need to build Chromium from the <em>2403</em> branch. Some
+PortableApps/<wbr>PortableChromium sites offer binaries like this, due to security
+concerns, the Chrome team does not recommend running them.</p>
+
+  </main>
+</div>
+<script>
+// Configure Algolia search.
+let s = document.createElement('script');
+s.src = '/_scripts/@docsearch/index.js';
+document.head.append(s);
+
+window.addEventListener('load', () => {
+  // Add the Algolia search widget.
+  docsearch({
+    container: '#search',
+    appId: 'RZDQYCCABX',
+    apiKey: '98b0eabafeb13fe3e1af693d5713d8b4',
+    indexName: 'chromium'
+  });
+});
+
+// Configure Google Analytics v4
+s = document.createElement('script');
+s.src = 'https://www.googletagmanager.com/gtag/js?id=G-24XP4PG02H'
+s.async = true;
+document.head.append(s)
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-24XP4PG02H');
+
+// Configure consent bar.
+s = document.createElement('script');
+s.src = 'https://www.gstatic.com/brandstudio/kato/cookie_choice_component/cookie_consent_bar.v3.js'
+s.dataset.autoloadCookieConsentBar = true;
+s.dataset.autoloadCookieContentBarIntlCode = '';
+document.head.append(s);
+
+// Configure the mobile navigation drawer.
+// Keep in sync with $mobile-nav-breakpoint in default.scss.
+const mobileNavBreakpoint = 768;
+const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+const mobileNav = document.getElementById('sidebar-left');
+const mobileNavClose = document.getElementById('mobile-nav-close');
+const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+
+if (mobileNavToggle && mobileNav && mobileNavClose && mobileNavBackdrop) {
+  const setMobileNavState = (isOpen) => {
+    mobileNavToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    document.body.classList.toggle('mobile-nav-open', isOpen);
+  };
+
+  const closeMobileNav = (returnFocus = false) => {
+    setMobileNavState(false);
+    if (returnFocus) {
+      mobileNavToggle.focus();
+    }
+  };
+
+  const openMobileNav = () => {
+    setMobileNavState(true);
+    mobileNav.scrollTop = 0;
+    mobileNavClose.focus();
+  };
+
+  mobileNavToggle.addEventListener('click', () => {
+    if (document.body.classList.contains('mobile-nav-open')) {
+      closeMobileNav();
+    } else {
+      openMobileNav();
+    }
+  });
+
+  mobileNavClose.addEventListener('click', () => closeMobileNav(true));
+  mobileNavBackdrop.addEventListener('click', () => closeMobileNav(true));
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeMobileNav(true);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > mobileNavBreakpoint) {
+      closeMobileNav();
+    }
+  });
+
+  mobileNav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMobileNav);
+  });
+}</script>
+
