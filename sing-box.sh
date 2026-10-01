@@ -65,12 +65,23 @@ function install_sing-box() {
 }
 
 function install_golang_and_caddy_with_forwardproxy_at_naive() {
-    apt-get install golang -y >/dev/null 2>&1
-    go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest >/dev/null 2>&1
-    /root/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive >/dev/null 2>&1
-    mv ./caddy /usr/bin >/dev/null 2>&1
-    rm -rf go >/dev/null 2>&1
-    rm -rf /root/.cache/go-build >/dev/null 2>&1
+    apt-get install golang -y
+    go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    /root/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive || true
+    if [ ! -f "./caddy" ]; then
+        echo "ERROR: Installation failed. Please try again!"
+        exit 1
+    else
+        mv ./caddy /usr/bin
+
+        if [ ! -d "/etc/caddy" ]; then
+            mkdir /etc/caddy
+        fi
+
+        if [ ! -d "/var/www/html" ]; then
+            mkdir -p /var/www/html
+        fi
+    fi
     exit 0
 }
 
@@ -79,48 +90,6 @@ function generate_naive() {
         echo "WARNING: The sing-box binary file isn't installed!"
         exit 1
     fi
-
-    if [ ! -f "/usr/bin/caddy" ]; then
-        echo "WARNING: The Caddy binary file isn't installed!"
-        echo "NOTICE:"
-        echo '  - Install Golang and the Caddy binary with "klzgrad/forwardproxy@naive" padding layer, combining both in one?'
-        echo ""
-        echo "      go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
-        echo "      ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive"
-        echo ""
-        exit 1
-    fi
-
-    if [ ! -f "/etc/caddy/Caddyfile" ]; then
-        echo "ERROR: No such a file!"
-        echo "  - /etc/caddy/Caddyfile"
-        exit 1
-    fi
-
-    if [ ! -d "/var/www/html/index.html" ]; then
-        echo "ERROR: No such a file!"
-        echo "  - /var/www/html/index.html"
-        exit 1
-    fi
-
-    if [ ! -d "/etc/caddy" ]; then
-        mkdir /etc/caddy
-    fi
-
-    wget -q https://raw.githubusercontent.com/sengshinlee/chromium-like4sing-tun2socks5/refs/heads/main/caddy/Caddyfile -P /etc/caddy
-    chmod 600 /etc/caddy/Caddyfile
-
-    if [ ! -d "/var/www/html" ]; then
-        mkdir -p /var/www/html
-    fi
-
-    wget -q https://github.com/sengshinlee/chromium-like4sing-tun2socks5/archive/refs/heads/main.zip
-    if [ ! -f "/usr/bin/unzip" ]; then
-        apt-get install unzip -y >/dev/null 2>&1
-    fi
-    unzip main.zip >/dev/null 2>&1
-    cp -r chromium-like4sing-tun2socks5-main/caddy/var/www/html /var/www/html >/dev/null 2>&1
-    rm -rf main.zip chromium-like4sing-tun2socks5-main >/dev/null 2>&1
 
     if [ ! -d "/etc/sing-box" ]; then
         mkdir /etc/sing-box
@@ -138,6 +107,40 @@ function generate_naive() {
         wget -q https://raw.githubusercontent.com/sengshinlee/chromium-like4sing-tun2socks5/refs/heads/main/user-custom-templates/server/ubuntu/sing-tun2socks5/config.ipv4.obfs.chromium-like.json5 -O /etc/sing-box/config.obfs.chromium-like.json5
     fi
     chmod 600 /etc/sing-box/*.json5
+
+    if [ ! -f "/usr/bin/caddy" ]; then
+        echo "WARNING: The Caddy binary file isn't installed!"
+        echo "NOTICE:"
+        echo '  - Install Golang and the Caddy binary with "klzgrad/forwardproxy@naive" padding layer, combining both in one?'
+        echo ""
+        echo "      go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest"
+        echo "      ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive"
+        echo ""
+        exit 1
+    fi
+
+    if [ ! -d "/etc/caddy" ]; then
+        echo "ERROR: No such a directory!"
+        echo "  - /etc/caddy"
+        exit 1
+    fi
+
+    wget -q https://raw.githubusercontent.com/sengshinlee/chromium-like4sing-tun2socks5/refs/heads/main/caddy/Caddyfile -P /etc/caddy
+    chmod 600 /etc/caddy/Caddyfile
+
+    if [ ! -d "/var/www/html" ]; then
+        echo "ERROR: No such a directory!"
+        echo "  - /var/www/html"
+        exit 1
+    fi
+
+    wget -q https://github.com/sengshinlee/chromium-like4sing-tun2socks5/archive/refs/heads/main.zip
+    if [ ! -f "/usr/bin/unzip" ]; then
+        apt-get install unzip -y >/dev/null 2>&1
+    fi
+    unzip main.zip >/dev/null 2>&1
+    cp -r chromium-like4sing-tun2socks5-main/caddy/var/www/html/* /var/www/html >/dev/null 2>&1
+    rm -rf main.zip chromium-like4sing-tun2socks5-main >/dev/null 2>&1
     exit 0
 }
 
@@ -204,30 +207,49 @@ EOF
 }
 
 function disable_ip_forwarding_and_google_bbr() {
-    rm /etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf >/dev/null 2>&1
-    sysctl -p /etc/sysctl.conf* >/dev/null 2>&1
+    if [ -f "/etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf" ]; then
+        rm /etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf >/dev/null 2>&1
+    fi
+
+    if [[ "${SERVER_PUBLIC_IP}" == *":"* ]]; then
+        cat >/etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf <<EOF
+net.ipv4.ip_forward = 0
+net.ipv6.conf.all.forwarding = 0
+net.core.default_qdisc = fq_codel
+net.ipv4.tcp_congestion_control = cubic
+EOF
+    else
+        cat >/etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf <<EOF
+net.ipv6.conf.all.disable_ipv6 = 0
+net.ipv6.conf.default.disable_ipv6 = 0
+net.ipv6.conf.lo.disable_ipv6 = 0
+net.ipv4.ip_forward = 0
+net.core.default_qdisc = fq_codel
+net.ipv4.tcp_congestion_control = cubic
+EOF
+    fi
+
+    sysctl -p /etc/sysctl.d/99-ip-forwarding-and-google-bbr.conf >/dev/null 2>&1
+    if [ -f "/etc/sysctl.conf*" ]; then
+        sysctl -p /etc/sysctl.conf* >/dev/null 2>&1
+    fi
     exit 0
 }
 
 function remove() {
-    if [ -f "/usr/bin/sing-box" ]; then
+    if [ -f "/usr/bin/caddy" ] || [ -f "/usr/bin/sing-box" ]; then
         rm /usr/local/bin/caddy-run-cron.sh >/dev/null 2>&1
         rm /var/log/caddy-run-cron.log >/dev/null 2>&1
         rm /usr/local/bin/sing-box-run-cron.sh >/dev/null 2>&1
         rm /var/log/sing-box-run-cron.log >/dev/null 2>&1
-        rm -rf /root/.local/share/caddy >/dev/null 2>&1
-        rm -rf /root/.config/caddy >/dev/null 2>&1
-        rm /root/cache.db >/dev/null 2>&1
-        rm /home/ubuntu/cache.db >/dev/null 2>&1
 
         pkill -15 -f "caddy run --config /etc/caddy/Caddyfile" >/dev/null 2>&1
         ip -4 rule del iif "${SERVER_PUBLIC_NIC}" lookup 2022 priority 8990 >/dev/null 2>&1
         pkill -15 -f "sing-box run -c /etc/sing-box/config.obfs.chromium-like.json5" >/dev/null 2>&1
-        apt-get purge sing-box -y >/dev/null 2>&1
 
-        if [ -d "/etc/sing-box" ]; then
-            rm -rf /etc/sing-box >/dev/null 2>&1
-        fi
+        rm /usr/bin/caddy >/dev/null 2>&1
+        rm -rf /root/.config/caddy >/dev/null 2>&1
+        rm -rf /root/.local/share/caddy >/dev/null 2>&1
 
         if [ -d "/etc/caddy" ]; then
             rm -rf /etc/caddy >/dev/null 2>&1
@@ -236,6 +258,21 @@ function remove() {
         if [ -d "/var/www/html" ]; then
             rm -rf /var/www >/dev/null 2>&1
         fi
+
+        apt-get purge sing-box -y >/dev/null 2>&1
+        rm /root/cache.db >/dev/null 2>&1
+        rm /home/ubuntu/cache.db >/dev/null 2>&1
+
+        if [ -d "/etc/sing-box" ]; then
+            rm -rf /etc/sing-box >/dev/null 2>&1
+        fi
+
+        apt-get purge golang -y >/dev/null 2>&1
+        rm -rf /root/go >/dev/null 2>&1
+        rm -rf /root/.cache/go-build >/dev/null 2>&1
+        rm -rf /root/.config/go >/dev/null 2>&1
+
+        apt-get autoremove -y >/dev/null 2>&1
 
         echo "NOTICE:"
         echo "  - Remove your cron schedule?"
@@ -336,7 +373,7 @@ function main() {
             -ic|--install-caddy)
                 install_golang_and_caddy_with_forwardproxy_at_naive
                 ;;
-            -gw|--generate-naive)
+            -gn|--generate-naive)
                 generate_naive
                 ;;
             -u|--up)
@@ -354,10 +391,10 @@ function main() {
             -r|--remove)
                 remove
                 ;;
-            -aw|--add-caddy)
+            -ac|--add-caddy)
                 caddy_run_cron
                 ;;
-            -at|--add-naive)
+            -an|--add-naive)
                 sing_box_run_cron
                 ;;
             *)
