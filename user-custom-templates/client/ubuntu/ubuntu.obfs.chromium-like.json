@@ -51,6 +51,7 @@
         "domain": [
           "ntp.ubuntu.com",
           "connectivity-check.ubuntu.com",
+          "github.com",
           "YOUR_NAIVE_SERVER_DOMAIN"
         ],
         "server": "DNSPod-V4"
