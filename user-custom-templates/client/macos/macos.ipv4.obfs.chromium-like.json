@@ -48,6 +48,7 @@
     "rules": [
       {
         "domain": [
+          "time.apple.com",
           "github.com",
           "YOUR_NAIVE_SERVER_DOMAIN"
         ],
