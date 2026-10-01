@@ -50,6 +50,7 @@
       {
         "domain": [
           "time.android.com",
+          "connectivity-check.ubuntu.com",
           "YOUR_NAIVE_SERVER_DOMAIN"
         ],
         "server": "DNSPod-V4"
