@@ -25,7 +25,7 @@
       {
         "type": "https",
         "tag": "Cloudflare-V4",
-        "detour": "wg-ep",
+        "detour": "naive-out",
         "server": "1.1.1.1",
         "tls": {
           "enabled": true,
@@ -35,7 +35,7 @@
       {
         "type": "https",
         "tag": "Cloudflare-DoH",
-        "detour": "wg-ep",
+        "detour": "naive-out",
         "domain_resolver": "Cloudflare-V4",
         "server": "cloudflare-dns.com"
       },
@@ -242,7 +242,7 @@
           "anthropic.cloudflareaccess.com",
           "claude-ai.staging.ant.dev"
         ],
-        "outbound": "wg-ep"
+        "outbound": "naive-out"
       },
       {
         "domain_suffix": [
@@ -268,7 +268,7 @@
           "claude.com",
           "anthropic.com"
         ],
-        "outbound": "wg-ep"
+        "outbound": "naive-out"
       },
       {
         "rule_set": "geosite-geolocation-cn",
@@ -290,7 +290,7 @@
       },
       {
         "rule_set": "geosite-anthropic",
-        "outbound": "wg-ep"
+        "outbound": "naive-out"
       }
     ],
     "rule_set": [
@@ -319,7 +319,7 @@
         "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-anthropic.srs"
       }
     ],
-    "final": "wg-ep",
+    "final": "naive-out",
     "auto_detect_interface": true,
     "default_domain_resolver": "DNSPod-DoH",
     "default_http_client": "rule-set-direct-out"
