@@ -48,6 +48,7 @@
     "rules": [
       {
         "domain": [
+          "time.apple.com",
           "YOUR_NAIVE_SERVER_DOMAIN"
         ],
         "server": "DNSPod-V4"
