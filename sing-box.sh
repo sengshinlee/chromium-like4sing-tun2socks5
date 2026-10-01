@@ -289,7 +289,7 @@ function caddy_run_cron() {
     cat >/usr/local/bin/caddy-run-cron.sh <<'EOF'
 #!/bin/bash
 
-if [ $(ps aux | grep "caddy run --config /etc/caddy/Caddyfile" | wc -l) -eq 0 ]; then
+if [ $(ps aux | grep "caddy run --config /etc/caddy/Caddyfile" | wc -l) -eq 1 ]; then
     echo "$(date): Caddy is closed, reopening..." | sudo tee -a /var/log/caddy-run-cron.log
     sudo caddy run --config /etc/caddy/Caddyfile
 fi
