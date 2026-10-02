@@ -1,8 +1,6 @@
 #!/bin/bash
 
 declare -g SERVER_PUBLIC_IP="$(curl -s https://cloudflare.com/cdn-cgi/trace | grep ip | awk -F '=' '{ print $2 }')"
-declare -g SERVER_PUBLIC_NIC="$(ip -4 -o route get 1.1.1.1 | awk '{ print $5 }')"
-
 
 function distribution() {
     if [ ! -f "/etc/debian_version" ]; then
@@ -158,7 +156,6 @@ function chromium-like_up() {
         sysctl -w net.core.default_qdisc=fq >/dev/null 2>&1
         sysctl -w net.ipv4.tcp_congestion_control=bbr >/dev/null 2>&1
     fi
-    ip -4 rule add iif "${SERVER_PUBLIC_NIC}" lookup 2022 priority 8990 >/dev/null 2>&1
     sing-box run -c /etc/sing-box/config.obfs.chromium-like.json5 &
     caddy run --config /etc/caddy/Caddyfile &
     exit 0
@@ -166,7 +163,6 @@ function chromium-like_up() {
 
 function chromium-like_down() {
     pkill -15 -f "caddy run --config /etc/caddy/Caddyfile" >/dev/null 2>&1
-    ip -4 rule del iif "${SERVER_PUBLIC_NIC}" lookup 2022 priority 8990 >/dev/null 2>&1
     pkill -15 -f "sing-box run -c /etc/sing-box/config.obfs.chromium-like.json5" >/dev/null 2>&1
     if [[ "${SERVER_PUBLIC_IP}" == *":"* ]]; then
         sysctl -w net.ipv4.ip_forward=0 >/dev/null 2>&1
