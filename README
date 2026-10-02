@@ -47,6 +47,7 @@ Features
       - /usr/local/bin/sing-box-run-cron.sh
 
   - Support both IPv4-only and dual-stack
+  - Optimize TCP traffic using Google BBR
 
   + Support sing-box naked core and all official GUI clients
       - sing-box naked core
