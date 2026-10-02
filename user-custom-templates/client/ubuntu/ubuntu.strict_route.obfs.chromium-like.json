@@ -337,8 +337,11 @@
   "experimental": {
     "cache_file": {
       "enabled": false,
+      "cache_id": "",
+      "store_fakeip": true,
       "store_dns": true,
-      "store_fakeip": true
+      "buffer_size": "1MB",
+      "flush_interval": "1d"
     }
   }
 }
