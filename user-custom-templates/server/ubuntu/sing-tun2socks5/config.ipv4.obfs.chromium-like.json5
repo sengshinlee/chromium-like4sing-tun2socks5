@@ -145,15 +145,28 @@
       "tag": "API",
       "listen": "127.0.0.1",
       "listen_port": 8081,
+      "secret": "",
+      "access_control_allow_origin": [],
+      "access_control_allow_private_network": false,
       "dashboard": {
-        "enabled": true
-      }
+        "enabled": true,
+        "path": "/etc/sing-box/dashboard",
+        "download_url": "",
+        "http_client": "",
+        "update_interval": "1d"
+      },
+     "tls": {}
     }
   ],
   "experimental": {
     "cache_file": {
       "enabled": true,
-      "store_dns": true
+      "path": "/etc/sing-box/cache.db",
+      "cache_id": "",
+      "store_fakeip": false,
+      "store_dns": true,
+      "buffer_size": "1MB",
+      "flush_interval": "1d"
     }
   }
 }
