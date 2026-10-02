@@ -256,8 +256,6 @@ function remove() {
         fi
 
         apt-get purge sing-box -y >/dev/null 2>&1
-        rm /root/cache.db >/dev/null 2>&1
-        rm /home/ubuntu/cache.db >/dev/null 2>&1
 
         if [ -d "/etc/sing-box" ]; then
             rm -rf /etc/sing-box >/dev/null 2>&1
