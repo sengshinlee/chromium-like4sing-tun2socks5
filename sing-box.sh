@@ -35,7 +35,7 @@ function install_sing-box() {
            [ "${HOSTNAME}" == "azure" ] || \
            [ "${HOSTNAME}" == "gcp" ] || \
            [ "${HOSTNAME}" == "tencentcloud" ]; then
-            curl -fsSL https://sing-box.app/install.sh | sh -s -- --version 1.15.0-alpha.9 >/dev/null 2>&1
+            curl -fsSL https://sing-box.app/install.sh | sh -s -- --version 1.15.0-alpha.10 >/dev/null 2>&1
         else
             echo "WARNING: The hostname must be one of the following:"
             echo "  - pikvm"
@@ -334,7 +334,7 @@ USAGE
 
 OPTION
     -h, --help              Show help manual
-    -is, --install-sing-box Install "sing-box-1.15.0-alpha.9-linux"
+    -is, --install-sing-box Install "sing-box-1.15.0-alpha.10-linux"
     -ic, --install-caddy    Install Caddy with "klzgrad/forwardproxy@naive" padding layer
     -gn, --generate-naive   Generate 2 files: "config[.ipv4].obfs.chromium-like.json5"
     -u, --up                Run NaiveProxy service

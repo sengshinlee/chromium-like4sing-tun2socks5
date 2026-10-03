@@ -1,14 +1,14 @@
 Description
-  A bash script for Ubuntu designed to seamlessly integrate the advantages of NaiveProxy, sing-box, and SOCKS5, so you can tunnel all you desire, mainly by providing user custom configuration templates for sing-box (Version: v1.15.0-alpha.9).
+  A bash script for Ubuntu designed to seamlessly integrate the advantages of NaiveProxy, sing-box, and SOCKS5, so you can tunnel all you desire, mainly by providing user custom configuration templates for sing-box (Version: v1.15.0-alpha.10).
 
 Features
-  - Only support "sing-box-1.15.0-alpha.9-linux"
+  - Only support "sing-box-1.15.0-alpha.10-linux"
 
   + Combine the advantages of NaiveProxy(Chromium-like) protocol, sing-box naked core and SOCKS5 protocol
       - NaiveProxy mimics real Chromium TLS and HTTP/2, so it reads as an ordinary browser tab
 
   + Install sing-box on Ubuntu Linux via dpkg
-      - Command: curl -fsSL https://sing-box.app/install.sh | sh -s -- --version 1.15.0-alpha.9
+      - Command: curl -fsSL https://sing-box.app/install.sh | sh -s -- --version 1.15.0-alpha.10
 
   + Provide a JSON Schema Draft 2020-12 for configuration files, compatible editors can use it for completion and validation
       - JSON Schema URL: https://sing-box.sagernet.org/schema.json
