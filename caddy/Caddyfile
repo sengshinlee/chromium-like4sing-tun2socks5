@@ -1,0 +1,20 @@
+{
+  order forward_proxy before file_server
+  log {
+    exclude http.log.error
+  }
+}
+
+:443, YOUR_NAIVE_SERVER_DOMAIN {
+  tls YOUR_NAIVE_SERVER_E-MAIL
+  encode
+  forward_proxy {
+    basic_auth YOUR_NAIVE_SERVER_USERNAME YOUR_NAIVE_SERVER_PASSWORD
+    hide_ip
+    hide_via
+    probe_resistance
+  }
+  file_server {
+    root /var/www/html
+  }
+}
